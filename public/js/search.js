@@ -2,6 +2,100 @@ $(document).ready(function(){
 
       //when value is being typed in
 
+    $("#movie").on("input",function(){
+      var searchValue = $(this).val();
+      console.log(searchValue);
+
+      //setup ajax token for fetching data 
+       $.ajaxSetup({
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+      });
+
+      //fetch the data from the database
+      $.ajax({
+        url: '/get/movies/'+searchValue,//route to fetch the data
+        type: 'GET',
+        datatype: 'json',
+        success: function(result){
+          var newResult = JSON.parse(result);
+
+          //create the new specialist select options
+          
+          createMovies(newResult);
+        }
+      });
+
+      function createMovies(movies){
+
+        var $movie_res = $("div[class='movie_res']").empty();
+
+        for( var i = movies.length - 1; i >= 0; i--){
+
+            var $mini_div = $("<div>", {class: "col-sm-6 col-md-4"});
+
+            var $form_group = $("<div>", {class: "form-group"});
+
+            var $card = $("<div>", {class: "card", style:"width:400px"});
+
+            var $card_img = $("<img>", {class: "card-img-top", src: "https://resizing.flixster.com/8nFCY03VSXGoMURFdpJpZmIvim0=/100x120/v1.cjs0MDcwNDtqOzE4MTgwOzEyMDA7Mjc1OzIzMw"});
+
+            var $card_body = $("<div>", {class:"card-body"});
+
+            var $movie = movies[i].name;
+            
+            var $card_title = $("<h4>", {class:"card-title", value:movies[i].id});
+
+            $card_title.append($movie);
+
+            var $add_btn = $("<a>", {class:"btn btn-primary"});
+
+            $add_btn.click({id: movies[i].id, name: $movie}, function(e){
+              
+              addMovie(e.data.id, e.data.name);
+
+            });
+
+            $add_btn.append("Add to movies");
+
+            $card_body.append($card_title);
+            $card_body.append($add_btn);
+
+            $card.append($card_img);
+            $card.append($card_body);
+
+            $form_group.append($card);
+
+            $mini_div.append($form_group);
+
+            $movie_res.append($mini_div);
+
+          }
+
+      }      
+
+      function addMovie($id, $name){
+
+        var $casts_div = $("div[id='selected-movies']");
+
+        var $cast = $("<div>", {class:"row"});
+
+        var $cast_id = $("<input>", {class:"col-md-2", type:"checkbox", name:"movied[]", value:$id, checked: true});
+
+        var $cast_name = $("<h6>", {class:"col-md-10", style:"text-align: left"});
+        
+        $cast_name.append($name);
+
+        $cast.append($cast_id);
+        $cast.append($cast_name);
+
+        $casts_div.append($cast);
+
+      }
+
+    });
+
     $("#photo").on("input",function(){
       var searchValue = $(this).val();
       console.log(searchValue);

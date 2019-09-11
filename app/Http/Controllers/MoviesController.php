@@ -53,8 +53,6 @@ class MoviesController extends Controller
     {
         $movie = new Movies();
         
-        $movie = new Movies();
-        
         $name          = $request->name;
         $release_date  = $request->release_date;
         $image         = $request->image;
@@ -236,7 +234,7 @@ class MoviesController extends Controller
                 $video = Videos::find($video);
 
                 if ($video) {
-                    $movie->videos()->attach($video);
+                    $movie->videos()->sync([$video->id], false);
                 }
             }
         }
@@ -248,7 +246,7 @@ class MoviesController extends Controller
                 $photo = Photos::find($photo);
 
                 if ($photo) {
-                    $movie->photos()->attach($photo);
+                    $movie->photos()->sync([$photo->id], false);
                 }
             }
         }
@@ -260,7 +258,7 @@ class MoviesController extends Controller
                 $genre = Genre::find($genre);
 
                 if ($genre) {
-                    $movie->genres()->attach($genre);
+                    $movie->genres()->sync([$genre->id], false);
                 }
             }
         }
@@ -273,7 +271,7 @@ class MoviesController extends Controller
                 $user = User::find($cast);
 
                 if ($user) {
-                    $movie->casts()->attach($user);
+                    $movie->casts()->sync([$user->id], false);
                 }
             }
         }

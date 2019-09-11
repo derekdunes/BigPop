@@ -173,7 +173,7 @@
                                 <label for="name" class="form-label">Select/Remove Photos</label><br>
                                   @if(count($movie->photos) > 0)
                                     @foreach($movie->photos as $photo)                                          
-                                      <input type="checkbox" name="photod[]" value="{{ $cast->id }}" checked>{{ $photo->description }} <br>
+                                      <input type="checkbox" name="photod[]" value="{{ $photo->id }}" checked>{{ $photo->description }} <br>
                                     @endforeach
                                   @endif
                               </div>

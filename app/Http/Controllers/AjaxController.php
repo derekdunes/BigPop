@@ -4,11 +4,21 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use App\Movies;
 use App\Photos;
 use App\Videos;
 
 class AjaxController extends Controller
 {	
+
+	function getMovies($movieName){
+
+		$movies = Movies::where('name', 'LIKE', '%'.$movieName.'%')->get();
+
+		echo json_encode($movies);
+
+		exit;
+	}
 
 	function getActors($actorName){
 

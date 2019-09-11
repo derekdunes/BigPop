@@ -13,14 +13,14 @@ class Videos extends Model
     //not functional
     public function movie(){
 
-    	return $this->hasOne(Movies::class, 'movie_videos', 'movie_id', 'video_id');
+    	return $this->hasOne(Movies::class, 'movie_videos', 'video_id', 'movie_id');
 
     }
 
     //tested
     public function users(){
 
-    	return $this->belongsToMany(User::class, 'user_videos', 'user_id', 'video_id');
+    	return $this->belongsToMany(User::class, 'user_videos', 'video_id', 'user_id');
 
     }
 

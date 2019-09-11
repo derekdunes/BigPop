@@ -2,6 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
+use App\Genre;
+use App\Roles;
+use App\Photos;
+use App\Videos;
+use App\Movies;
+use App\Ratings;
+use App\CastCrew;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -9,7 +17,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::paginate(10);
-        return view('users.index', [ 'users' => $users]);
+        return view('users.index', compact('users'));
     }
 
     /**
@@ -20,7 +28,7 @@ class UserController extends Controller
     public function create()
     {
         $roles = Roles::all();
-        return view('users.create', [ 'roles' => $roles]);
+        return view('users.create', compact('roles'));
     }
 
     /**
@@ -31,14 +39,23 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $user       = new User();
+        $user = new User();
         
         $first_name = $request->first_name;
         $last_name  = $request->last_name;
         $email      = $request->email;
+        //$date       = $request->birth_date;
+        $image      = $request->image;
+        
+        if ($request->password != $request->confirm_password) {
+            # code...
+            //return redirect('users.create')->with{'message','Password does not Match'};
+            return;
+        }
+
         $password   = bcrypt($request->password);
         $bio        = $request->bio;
-        $role_id    = $request->role;
+        $role_id    = $request->role_id;
 
         $user->first_name = $first_name;
         $user->last_name  = $last_name;
@@ -46,9 +63,51 @@ class UserController extends Controller
         $user->password   = $password;
         $user->role_id    = $role_id;
         $user->bio        = $bio;
+        //$user->date       = $date;
+        $user->profile_pic = $image;
         $user->save();
 
-        return Redirect::to('users')->with('message', 'New User added!');
+        $movies = $request->movied;
+        $photos = $request->photod;
+        $videos = $request->videod;
+
+        if(isset($videos) && count($videos) > 0)
+        {
+            foreach($videos as $video)
+            {   
+                $video = Videos::find($video);
+
+                if ($video) {
+                    $user->videos()->attach($video);
+                }
+            }
+        }
+
+        if(isset($photos) && count($photos) > 0)
+        {
+            foreach($photos as $photo)
+            {   
+                $photo = Photos::find($photo);
+
+                if ($photo) {
+                    $user->photos()->attach($photo);
+                }
+            }
+        }
+
+        if(isset($movies) && count($movies) > 0)
+        {
+            foreach($movies as $movie)
+            {   
+                $movie = Movies::find($movie);
+
+                if ($movie) {
+                    $user->movies()->attach($movie);
+                }
+            }
+        }
+
+        return redirect('user')->with('message', 'New User added!');
     }
 
     /**
@@ -59,9 +118,11 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user  = User::find($id);
-        $roles = Roles::all();
-        return view('users.show', [ 'roles' => $roles , 'user' => $user ]);
+        $user  = User::with('photos','movies','videos')->find($id);
+        $user->user_views = $user->user_views + 1;
+        $user->save();
+        
+        return view('users.show', compact('user'));
     }
 
     /**
@@ -72,9 +133,9 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        $user  = User::find($id);
+        $user  = User::with('videos','photos','movies')->find($id);
         $roles = Roles::all();
-        return view('users.edit', [ 'roles' => $roles , 'user' => $user ]);
+        return view('users.edit', compact('roles','user'));
     }
 
     /**
@@ -91,25 +152,77 @@ class UserController extends Controller
         $first_name = $request->first_name;
         $last_name  = $request->last_name;
         $email      = $request->email;
+        //$date       = $request->birth_date;
+        $image      = $request->image;
 
-        if($request->password)
-            $password   = bcrypt($request->password);
-
+        $password   = bcrypt($request->password);
         $bio        = $request->bio;
-        $role_id    = $request->role;
+        $role_id    = $request->role_id;
 
-        $user->first_name = $first_name;
-        $user->last_name  = $last_name;
-        $user->email      = $email;
-
-        if($request->password)
-            $user->password   = $password;
-
-        $user->role_id    = $role_id;
-        $user->bio        = $bio;
+        if ($first_name)
+            $user->first_name = $first_name;
+        
+        if ($last_name)
+            $user->last_name  = $last_name;
+        
+        if ($email)
+            $user->email      = $email;
+        
+        if ($role_id)
+            $user->role_id    = $role_id;
+        
+        if ($bio)
+            $user->bio        = $bio;
+        
+        //if ($date)
+            //$user->date       = $date;
+        
+        if ($image)
+            $user->profile_pic = $image;
+        
         $user->save();
 
-        return Redirect::to('users')->with('message', 'User updated!');
+        $movies = $request->movied;
+        $photos = $request->photod;
+        $videos = $request->videod;
+
+        if(isset($videos) && count($videos) > 0)
+        {
+            foreach($videos as $video)
+            {   
+                $video = Videos::find($video);
+
+                if ($video) {
+                    $user->videos()->sync([$video->id], false);
+                }
+            }
+        }
+
+        if(isset($photos) && count($photos) > 0)
+        {
+            foreach($photos as $photo)
+            {   
+                $photo = Photos::find($photo);
+
+                if ($photo) {
+                    $user->photos()->sync([$photo->id], false);
+                }
+            }
+        }
+
+        if(isset($movies) && count($movies) > 0)
+        {
+            foreach($movies as $movie)
+            {   
+                $movie = Movies::find($movie);
+
+                if ($movie) {
+                    $user->movies()->sync([$movie->id], false);
+                }
+            }
+        }
+
+        return redirect('users')->with('message', 'User updated!');
 
     }
 
@@ -122,7 +235,7 @@ class UserController extends Controller
     public function destroy($id)
     {
         User::find($id)->delete();
-        return Redirect::to('users')->with('message', 'User deleted!');
+        return redirect('users')->with('message', 'User deleted!');
     }
     
 }

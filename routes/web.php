@@ -22,6 +22,7 @@ Route::get('users/destroy/{id}', 'UserController@destroy')->name('users.destroy'
 Route::get('roles/destroy/{id}', 'RolesController@destroy')->name('roles.destroy');
 Route::get('movies/destroy/{id}', 'MoviesController@destroy')->name('movies.destroy');
 
+Route::get('get/movies/{movie}', 'AjaxController@getMovies');
 Route::get('get/actors/{actor}', 'AjaxController@getActors');
 Route::get('get/photos/{photo}', 'AjaxController@getPhotos');
 Route::get('get/videos/{video}', 'AjaxController@getVideos');

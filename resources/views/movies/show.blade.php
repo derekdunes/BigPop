@@ -12,9 +12,7 @@
                                         <div class="table">
                                                 <table class="table table-striped">
                                                         <tr>
-                                                                <td><strong>{{ $movie->name}}</strong>: 
-                                                                        {{ $movie->plot}}
-                                                                </td>
+                                                            <td>Movie Plot : {{ $movie->plot}}</td>
                                                                 <td><img src='{{ $movie->image}}'></td>
                                                         </tr>
 
@@ -23,7 +21,7 @@
                                                         </tr> 
 
                                                         <tr>
-                                                                <td>Year : {{$movie->rating->name}}</td>  
+                                                                <td>Rating : {{$movie->rating->name}}</td>  
                                                         </tr>
 
                                                         <tr>

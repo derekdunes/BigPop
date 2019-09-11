@@ -13,14 +13,14 @@ class Photos extends Model
 
     public function movie(){
 
-    	return $this->belongsToMany(Movies::class, 'movie_photos', 'movie_id', 'photo_id');
+    	return $this->belongsToMany(Movies::class, 'movie_photos', 'photo_id', 'movie_id');
 
     }
 
     //tested
     public function users(){
 
-    	return $this->belongsToMany(User::class, 'user_photos', 'user_id', 'photo_id');
+    	return $this->belongsToMany(User::class, 'user_photos', 'photo_id', 'user_id');
 
     }
 

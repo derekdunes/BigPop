@@ -8,7 +8,7 @@ class Genre extends Model
 {
     public function genre(){
 
-    	return $this->belongsToMany(Movies::class, 'movie_genres', 'movie_id', 'genre_id');
+    	return $this->belongsToMany(Movies::class, 'movie_genres', 'genre_id', 'movie_id');
 
     }
 

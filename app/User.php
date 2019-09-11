@@ -58,7 +58,7 @@ class User extends Authenticatable
     //tested
     public function movies(){
 
-        return $this->belongsToMany(Movies::class, 'cast_crews','movie_id','user_id');
+        return $this->belongsToMany(Movies::class, 'cast_crews','user_id','movie_id');
 
     }
 
@@ -72,6 +72,12 @@ class User extends Authenticatable
     public function reviews(){
 
         return $this->hasMany(Reviews::class);
+    }
+
+    public function role(){
+
+        return $this->belongsTo(Roles::class);
+    
     }
 
     //tested
